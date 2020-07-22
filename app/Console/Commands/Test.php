@@ -26,7 +26,11 @@ class Test extends Command
 //
 //        var_dump($val);
 
-        $response = OkChainExplorer::instance()->validators();
+//        $response = OkChainExplorer::instance()->validators();
+//
+//        var_dump($response);
+
+        $response = OkChainExplorer::instance()->getDelegator('okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f');
 
         var_dump($response);
     }

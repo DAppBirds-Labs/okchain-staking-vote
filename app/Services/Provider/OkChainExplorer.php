@@ -25,7 +25,26 @@ class OkChainExplorer extends Service
         ]);
     }
 
-    protected function _getUrl($path, $method, $data)
+    public function getDelegator($delegator_address)
+    {
+        $response = $this->_getUrl("/okchain/v1/staking/delegators/{$delegator_address}", 'GET');
+        if(!$response){
+            return false;
+        }
+
+        $response2 = $this->_getUrl("/okchain/v1/staking/delegators/{$delegator_address}/unbonding_delegations", 'GET');
+        if(!$response2){
+            return false;
+        }
+
+        $response['unbonding_token'] = \Arr::get($response2, 'quantity');
+        $response['completion_time'] = \Arr::get($response2, 'completion_time');
+
+        return $response;
+
+    }
+
+    protected function _getUrl($path, $method, $data = [])
     {
         if($method == 'GET'){
             $url = $this->api_provider . $path . ($data ? '?'. http_build_query($data) : '');
