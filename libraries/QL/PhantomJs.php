@@ -24,8 +24,8 @@ class PhantomJs implements PluginContract
         // PhantomJS bin path
         $phantomJsBin = $opt[0];
         $name = $opt[1] ?? 'browser';
-        $queryList->bind($name,function ($request,$debug = false,$commandOpt = []) use($phantomJsBin){
-            return PhantomJs::render($this,$phantomJsBin,$request,$debug,$commandOpt);
+        $queryList->bind($name,function ($request,$debug = false,$commandOpt = []) use($phantomJsBin, $queryList){
+            return PhantomJs::render($queryList, $phantomJsBin,$request,$debug,$commandOpt);
         });
     }
 

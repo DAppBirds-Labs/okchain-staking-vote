@@ -48,5 +48,8 @@ class Test extends Command
         $ql->use(PhantomJs::class,'/usr/local/bin/phantomjs');
 //or Custom function name
         $ql->use(PhantomJs::class,'/usr/local/bin/phantomjs','browser');
+
+        $html = $ql->browser('https://m.toutiao.com')->getHtml();
+        print_r($html);
     }
 }
