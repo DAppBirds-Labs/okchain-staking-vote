@@ -61,4 +61,11 @@ class ValidatorCache extends Service
 
         return $results;
     }
+
+    public function getPoolInfo()
+    {
+        $response = OkChainExplorer::instance()->poolAssets();
+
+        return $response;
+    }
 }
