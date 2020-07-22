@@ -3,6 +3,7 @@
 namespace App\Services\Provider;
 
 use App\Services\Service;
+use Illuminate\Support\Arr;
 
 /**
  * Class OkChainExplorer
@@ -37,8 +38,8 @@ class OkChainExplorer extends Service
             return false;
         }
 
-        $response['unbonding_token'] = \Arr::get($response2, 'quantity');
-        $response['completion_time'] = \Arr::get($response2, 'completion_time');
+        $response['unbonding_token'] = Arr::get($response2, 'quantity');
+        $response['completion_time'] = Arr::get($response2, 'completion_time');
 
         return $response;
 
