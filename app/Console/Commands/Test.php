@@ -6,7 +6,7 @@ use App\Services\Provider\OkChainExplorer;
 use App\Services\Service\NetworkService;
 use Illuminate\Console\Command;
 use QL\QueryList;
-use QL\Ex\PhantomJs;
+use QL\Ext\PhantomJs;
 
 class Test extends Command
 {
@@ -40,14 +40,16 @@ class Test extends Command
 //        $response = OkChainExplorer::instance()->getAllProducer(0, 30);
 //
 //        var_dump($response);
+
+        $this->fetch();
     }
 
     public function fetch()
     {
         $ql = QueryList::getInstance();
-        $ql->use(PhantomJs::class,'/usr/local/bin/phantomjs');
+        $ql->use(PhantomJs::class,'/usr/bin/phantomjs');
 //or Custom function name
-        $ql->use(PhantomJs::class,'/usr/local/bin/phantomjs','browser');
+        $ql->use(PhantomJs::class,'/usr/bin/phantomjs','browser');
 
         $html = $ql->browser('https://m.toutiao.com')->getHtml();
         print_r($html);
