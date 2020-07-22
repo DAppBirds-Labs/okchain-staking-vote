@@ -12,6 +12,9 @@ use Illuminate\Support\Arr;
 class OkChainExplorer extends Service
 {
     protected $api_provider = 'https://www.okex.com';
+    protected $oklink_api_provider = 'https://www.oklink.com';
+    private $api_key = 'LWIzMWUtNDU0Ny05Mjk5LWI2ZDA3Yjc2MzFhYmEyYzkwM2NjfDI3MDY1MTYzODY2NjY5Nzg=';
+
     protected $network_impl;
 
     public function __construct()
@@ -45,6 +48,63 @@ class OkChainExplorer extends Service
 
     }
 
+    public function getVoteAddressByValidator($validator_address)
+    {
+        $response = $this->_getUrl("/okchain/v1/staking/validators/{$validator_address}/votes", 'GET');
+
+        return $response;
+    }
+
+    public function poolAssets()
+    {
+        /*
+         *  {
+            not_bonded_tokens: "8.00000000",
+            bonded_tokens: "4257859.54840000",
+            }
+         */
+        $response = $this->_getUrl('/okchain/v1/staking/pool', 'GET');
+
+        return $response;
+    }
+
+    public function getValidator($validator_address)
+    {
+        $response = $this->_getUrl("/okchain/v1/staking/validators/{$validator_address}", 'GET');
+
+        return $response;
+    }
+
+    public function stakingParameters()
+    {
+        /*
+         * {
+              "unbonding_time": "300000000000",
+              "max_bonded_validators": 21,
+              "epoch": 252,
+              "max_validators_to_vote": 30,
+              "bond_denom": "tokt",
+              "min_delegation": "0.00010000"
+            }
+         */
+        $response = $this->_getUrl("/okchain/v1/staking/parameters", 'GET');
+
+        return $response;
+    }
+
+    public function getAllProducer($offset = 0, $limit = 30)
+    {
+        $t = time() * 1000;
+        $response = $this->_getUrlOnLink('/api/explorer/v1/okchain_test/validators', 'GET', [
+            't' => $t,
+            'offset' => $offset,
+            'limit' => $limit,
+            'q' => '',
+        ]);
+
+        return $response;
+    }
+
     protected function _getUrl($path, $method, $data = [])
     {
         if($method == 'GET'){
@@ -54,5 +114,18 @@ class OkChainExplorer extends Service
         }
 
         return $this->network_impl->get($url, $method, $data);
+    }
+
+    protected function _getUrlOnLink($path, $method, $data = [])
+    {
+        if($method == 'GET'){
+            $url = $this->oklink_api_provider . $path . ($data ? '?'. http_build_query($data) : '');
+        }else{
+            $url = $this->oklink_api_provider . $path;
+        }
+
+        return $this->network_impl->get($url, $method, $data, [
+            'x-apiKey: '. $this->api_key,
+        ]);
     }
 }

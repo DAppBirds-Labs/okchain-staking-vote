@@ -12,7 +12,7 @@ class NetworkService extends Service
 {
     static protected $ch = null;
 
-    public function get($url, $method = 'GET', $data = [])
+    public function get($url, $method = 'GET', $data = [], $headers = [])
     {
         if (!isset(self::$ch)) {
             self::$ch = curl_init();
@@ -29,11 +29,11 @@ class NetworkService extends Service
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge([
                 'Connection: Keep-Alive',
                 'Keep-Alive: 300',
                 'user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-            ]);
+            ], $headers));
 
             if($method == 'POST'){
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
