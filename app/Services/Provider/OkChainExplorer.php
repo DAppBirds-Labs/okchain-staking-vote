@@ -124,8 +124,16 @@ class OkChainExplorer extends Service
             $url = $this->oklink_api_provider . $path;
         }
 
+        var_dump($url);
         return $this->network_impl->get($url, $method, $data, [
             'x-apiKey: '. $this->api_key,
+            'App-Type: web',
+            'devId: 3923dcf2-0a95-47de-a055-39f396e44bd1',
+            'Host: www.oklink.com',
+            'Referer: https://www.oklink.com/okchain-test/bp-list',
+            'timeout: 10000',
+            'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
+            'x-cdn: https://static.bafang.com',
         ]);
     }
 }

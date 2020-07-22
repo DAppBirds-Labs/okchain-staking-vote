@@ -16,6 +16,8 @@ $router->get('/', function () use ($router) {
     return 'DAppBirds is Blockchain service providers';
 });
 
+$router->get('main', 'MainController@index');
+
 // Route Model
 //$router->get('example/{id}', 'ExampleController@show');
 //$router->get('foo', 'Photos\TestController@method');

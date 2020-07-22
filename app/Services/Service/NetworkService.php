@@ -22,6 +22,12 @@ class NetworkService extends Service
         $start_time = microtime(true);
         $response = '';
 
+        $headers = array_merge([
+            'Connection: Keep-Alive',
+            'Keep-Alive: 300',
+            'user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
+        ], $headers);
+
         for ($i = 0, $l = 3; $i < $l; ++ $i) {
 //            curl_setopt($ch, CURLOPT_FORBID_REUSE, false);
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
@@ -29,11 +35,7 @@ class NetworkService extends Service
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
             curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array_merge([
-                'Connection: Keep-Alive',
-                'Keep-Alive: 300',
-                'user-agent: Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1',
-            ], $headers));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
             if($method == 'POST'){
                 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);

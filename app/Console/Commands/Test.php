@@ -5,8 +5,6 @@ namespace App\Console\Commands;
 use App\Services\Provider\OkChainExplorer;
 use App\Services\Service\NetworkService;
 use Illuminate\Console\Command;
-use QL\QueryList;
-use QL\Ext\PhantomJs;
 
 class Test extends Command
 {
@@ -28,9 +26,9 @@ class Test extends Command
 //
 //        var_dump($val);
 
-//        $response = OkChainExplorer::instance()->validators();
-//
-//        var_dump($response);
+        $response = OkChainExplorer::instance()->validators();
+
+        var_dump($response);
 
 //        $response = OkChainExplorer::instance()->getDelegator('okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f');
 //
@@ -41,17 +39,12 @@ class Test extends Command
 //
 //        var_dump($response);
 
-        $this->fetch();
+//        \Cache::forever('test22', 11111);
+
+//        $t1 = \Cache::get('test22');
+//
+//        var_dump($t1);
     }
 
-    public function fetch()
-    {
-        $ql = QueryList::getInstance();
-        $ql->use(PhantomJs::class,'/usr/bin/phantomjs');
-//or Custom function name
-        $ql->use(PhantomJs::class,'/usr/bin/phantomjs','browser');
 
-        $html = $ql->browser('https://m.toutiao.com')->getHtml();
-        print_r($html);
-    }
 }
