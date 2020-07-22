@@ -17,7 +17,7 @@ class ValidatorCache extends Service
     {
         $cache_key = 'cache:all-validator';
         $data = \Cache::get($cache_key);
-        $data && $data = json_decode($data);
+        $data && $data = json_decode($data, true);
         $now = time();
         $results = null;
         if(!$data || $data['expire_time'] < $now){
