@@ -17,8 +17,8 @@ $router->get('/', function () use ($router) {
 });
 
 $router->get('main', 'MainController@index');
-$router->get('account/info', 'AccountController@info');
 $router->get('account/votes', 'AccountController@votes');
+$router->get('account/info', 'AccountController@info');
 
 // Route Model
 //$router->get('example/{id}', 'ExampleController@show');
