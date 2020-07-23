@@ -13,7 +13,9 @@
 
 $router->get('/', function () use ($router) {
 //    return $router->app->version();
-    return 'DAppBirds is Blockchain service providers';
+//    return 'DAppBirds is Blockchain service providers';
+
+    return view('test/index');
 });
 
 foreach ([
