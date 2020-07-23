@@ -22,7 +22,7 @@ class AccountController extends Controller
 
         $delegator_info = OkChainExplorer::instance()->getDelegator($user_address);
 
-
+        $delegator_info && ValidatorCache::instance()->storeDelegator($user_address, $delegator_info);
         $available = Arr::get($asset_info, 'available');
 
         $delegator_info['asset_balance'] =  $available;
