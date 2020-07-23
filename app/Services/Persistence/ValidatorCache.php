@@ -79,7 +79,27 @@ class ValidatorCache extends Service
         if(!$data || $data['expire_time'] < $now){
             $info = OkChainExplorer::instance()->getDelegator($delegator_address);
 
-            $expire_time = $now + 200;
+            $expire_time = $now + 30;
+
+            $info && \Cache::forever($cache_key, json_encode(['expire_time' => $expire_time , 'info' => $info]));
+        }else{
+            $info = Arr::get($data, 'info');
+        }
+
+        return $info;
+    }
+
+    public function getAccountAsset($delegator_address, $bond_denom)
+    {
+        $cache_key = sprintf('cache:account_asset-%s-%s', $delegator_address, $bond_denom);
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        $now = time();
+        $info = null;
+        if(!$data || $data['expire_time'] < $now){
+            $info = OkChainExplorer::instance()->getAccountAsset($delegator_address, $bond_denom);
+
+            $expire_time = $now + 30;
 
             $info && \Cache::forever($cache_key, json_encode(['expire_time' => $expire_time , 'info' => $info]));
         }else{

@@ -14,15 +14,15 @@ class AccountController extends Controller
         $user_address = $request->get('user_address');
 
         // 查询余额
-        $params = ValidatorCache::instance()->getParam();
+        $validator_cache_impl = ValidatorCache::instance();
+        $params = $validator_cache_impl->getParam();
 
         $bond_denom = Arr::get($params, 'bond_denom');
         //
-        $asset_info = OkChainExplorer::instance()->getAccountAsset($user_address, $bond_denom);
+        $asset_info = $validator_cache_impl->getAccountAsset($user_address, $bond_denom);
 
-        $delegator_info = OkChainExplorer::instance()->getDelegator($user_address);
+        $delegator_info = $validator_cache_impl->getDelegator($user_address);
 
-        $delegator_info && ValidatorCache::instance()->storeDelegator($user_address, $delegator_info);
         $available = Arr::get($asset_info, 'available');
 
         $delegator_info['asset_balance'] =  $available;
