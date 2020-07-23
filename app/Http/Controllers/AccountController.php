@@ -15,22 +15,21 @@ class AccountController extends Controller
 
         // 查询余额
         $params = ValidatorCache::instance()->getParam();
+
         $bond_denom = Arr::get($params, 'bond_denom');
-        !$bond_denom && $bond_denom = config('app.bond_denom');
         //
         $asset_info = OkChainExplorer::instance()->getAccountAsset($user_address, $bond_denom);
-        $asset_logo = config('app.bond_denom_logo');
 
         $delegator_info = OkChainExplorer::instance()->getDelegator($user_address);
+
 
         $available = Arr::get($asset_info, 'available');
 
         $delegator_info['asset_balance'] =  $available;
-        $asset_logo = \Image::formatCustomUrl($asset_logo, $this->is_force_secure);
+        $params['asset_logo'] = \Image::formatCustomUrl($params['asset_logo'], $this->is_force_secure);
 
         return $this->success($delegator_info, [
-            'bond_denom' => $bond_denom,
-            'asset_logo' => $asset_logo,
+            'staking_param' => $params,
         ]);
     }
 

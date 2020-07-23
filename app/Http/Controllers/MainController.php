@@ -16,11 +16,12 @@ class MainController extends Controller
         $pool_assets = OkChainExplorer::instance()->poolAssets();
         $bonded_tokens = Arr::get($pool_assets, 'bonded_tokens');
 
-        $parameter = OkChainExplorer::instance()->stakingParameters();
+        $params = ValidatorCache::instance()->getParam();
+        $params['asset_logo'] = \Image::formatCustomUrl($params['asset_logo'], $this->is_force_secure);
 
         return $this->success($lists, [
             'pool_bonded_tokens' => $bonded_tokens,
-            'staking_param' => $parameter,
+            'staking_param' => $params,
         ]);
     }
 }

@@ -16,9 +16,17 @@ $router->get('/', function () use ($router) {
     return 'DAppBirds is Blockchain service providers';
 });
 
-$router->get('main', 'MainController@index');
-$router->get('account/votes', 'AccountController@votes');
-$router->get('account/info', 'AccountController@info');
+foreach ([
+             'main' => 'MainController@index',
+             'account/votes' => 'AccountController@votes',
+             'account/info' => 'AccountController@info',
+             'validator/info' => 'ValidatorController@info',
+             'validator/vote-addresses' => 'AccountController@voteAddresses'
+         ] as $uri => $controler)
+{
+    $router->get($uri, $controler);
+    $router->post($uri, $controler);
+}
 
 // Route Model
 //$router->get('example/{id}', 'ExampleController@show');

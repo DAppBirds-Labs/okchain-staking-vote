@@ -101,6 +101,13 @@ class OkChainExplorer extends Service
         return $response;
     }
 
+    public function getValidatorRewards($validator_address)
+    {
+        $response = $this->_getUrl("/okchain/v1/distribution/validators/{$validator_address}/validator_commission", 'GET');
+
+        return $response;
+    }
+
     public function stakingParameters()
     {
         /*

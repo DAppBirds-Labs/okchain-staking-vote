@@ -54,7 +54,7 @@ class ValidatorCache extends Service
 
             $now += 10;
 
-            \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'results' => $results]));
+            $results && \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'results' => $results]));
         }else{
             $results = Arr::get($data, 'results');
         }
@@ -69,6 +69,37 @@ class ValidatorCache extends Service
         return $response;
     }
 
+    public function getDelegator($delegator_address)
+    {
+        $cache_key = sprintf('cache:delegator_info-%s', $delegator_address);
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        $now = time();
+        $info = null;
+        if(!$data || $data['expire_time'] < $now){
+            $info = OkChainExplorer::instance()->getDelegator($delegator_address);
+
+            $expire_time = $now + 200;
+
+            $info && \Cache::forever($cache_key, json_encode(['expire_time' => $expire_time , 'info' => $info]));
+        }else{
+            $info = Arr::get($data, 'info');
+        }
+
+        return $info;
+    }
+
+    public function storeDelegator($delegator_address, $info)
+    {
+        $cache_key = sprintf('cache:delegator_info-%s', $delegator_address);
+
+        $expire_time = time() + 200;
+
+        $ret =\Cache::forever($cache_key, json_encode(['expire_time' => $expire_time , 'info' => $info]));
+
+        return $ret;
+    }
+
     public function getParam()
     {
         $cache_key = 'cache:chain-param';
@@ -80,10 +111,14 @@ class ValidatorCache extends Service
             $params = OkChainExplorer::instance()->stakingParameters();
 
             $now += 300;
-            \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'params' => $params]));
+            $params && \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'params' => $params]));
         }else{
             $params = Arr::get($data, 'params');
         }
+
+        $bond_denom = Arr::get($params, 'bond_denom');
+        !$bond_denom && $params['bond_denom'] = config('app.bond_denom');
+        $params['asset_logo'] = config('app.bond_denom_logo');
 
         return $params;
     }
