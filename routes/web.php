@@ -21,7 +21,7 @@ foreach ([
              'account/votes' => 'AccountController@votes',
              'account/info' => 'AccountController@info',
              'validator/info' => 'ValidatorController@info',
-             'validator/vote-addresses' => 'AccountController@voteAddresses'
+             'validator/vote-addresses' => 'ValidatorController@voteAddresses'
          ] as $uri => $controler)
 {
     $router->get($uri, $controler);
