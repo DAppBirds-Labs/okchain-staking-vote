@@ -26,8 +26,11 @@ class AccountController extends Controller
         $available = Arr::get($asset_info, 'available');
 
         $delegator_info['asset_balance'] =  $available;
-        $delegator_info['asset_logo'] = \Image::formatCustomUrl($asset_logo, $this->is_force_secure);
+        $asset_logo = \Image::formatCustomUrl($asset_logo, $this->is_force_secure);
 
-        return $this->success($delegator_info);
+        return $this->success($delegator_info, [
+            'bond_denom' => $bond_denom,
+            'asset_logo' => $asset_logo,
+        ]);
     }
 }

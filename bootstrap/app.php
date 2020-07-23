@@ -21,6 +21,9 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+// Load config
+$app->configure('app');
+
  $app->withFacades(true, [
      'App\Support\Facades\Online' => 'Online'
  ]);

@@ -12,6 +12,9 @@ class Test extends Command
 
     public function handle()
     {
+
+        $validator_logo = config('app.validator_logo');
+        var_dump($validator_logo);
 //        $demo = \Online::testDemo();
 //        var_dump($demo);
 
