@@ -31,6 +31,32 @@ class OkChainExplorer extends Service
 
     public function getDelegator($delegator_address)
     {
+        /*
+         * ["delegator_address"]=>
+          string(46) "okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f"
+          ["validator_address"]=>
+          array(2) {
+            [0]=>
+            string(53) "okchainvaloper1g7znsf24w4jc3xfca88pq9kmlyjdare6mph5rx"
+            [1]=>
+            string(53) "okchainvaloper1rk9umqd62zmeethwx4cg483ewnft6p8pmp5hke"
+          }
+          ["shares"]=>
+          string(18) "260234071.12780866"
+          ["tokens"]=>
+          string(12) "162.00000000"
+          ["is_proxy"]=>
+          bool(false)
+          ["total_delegated_tokens"]=>
+          string(10) "0.00000000"
+          ["proxy_address"]=>
+          string(0) ""
+          ["unbonding_token"]=>
+          string(10) "8.00000000"
+          ["completion_time"]=>
+          string(30) "2020-08-04T12:03:40.924422993Z"
+         */
+
         $response = $this->_getUrl("/okchain/v1/staking/delegators/{$delegator_address}", 'GET');
         if(!$response){
             return false;
@@ -103,6 +129,23 @@ class OkChainExplorer extends Service
         ]);
 
         return $response;
+    }
+
+    public function getAccountAsset($address, $asset)
+    {
+        $response = $this->_getUrl("/okchain/v1/accounts/{$address}", 'GET', [
+            'symbol' => $asset,
+        ]);
+
+        if(Arr::get($response, 'code') != 0){
+            return false;
+        }
+
+        $data = Arr::get($response, 'data');
+
+        $asset_info = Arr::get($data, 'currencies.0');
+
+        return $asset_info;
     }
 
     protected function _getUrl($path, $method, $data = [])

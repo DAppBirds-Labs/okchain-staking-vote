@@ -6,6 +6,15 @@ use Laravel\Lumen\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
+
+    protected $is_force_secure;
+
+    public function __construct()
+    {
+        $request = app('request');
+        $this->is_force_secure = \Online::detectRequestSecure($request);
+    }
+
     //
     protected function error($code, $msg, $data = null, $extra = null)
     {

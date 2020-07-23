@@ -12,6 +12,10 @@ class Test extends Command
 
     public function handle()
     {
+//        $demo = \Online::testDemo();
+//        var_dump($demo);
+
+
 //        var_dump('22222');
 
 //        $url = 'https://www.okex.com/okchain/v1/staking/delegators/okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f';
@@ -26,9 +30,9 @@ class Test extends Command
 //
 //        var_dump($val);
 
-        $response = OkChainExplorer::instance()->validators();
-
-        var_dump($response);
+//        $response = OkChainExplorer::instance()->validators();
+//
+//        var_dump($response);
 
 //        $response = OkChainExplorer::instance()->getDelegator('okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f');
 //

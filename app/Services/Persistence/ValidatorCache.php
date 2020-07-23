@@ -68,4 +68,23 @@ class ValidatorCache extends Service
 
         return $response;
     }
+
+    public function getParam()
+    {
+        $cache_key = 'cache:chain-param';
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        $now = time();
+        $params = null;
+        if(!$data || $data['expire_time'] < $now){
+            $params = OkChainExplorer::instance()->stakingParameters();
+
+            $now += 300;
+            \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'params' => $params]));
+        }else{
+            $params = Arr::get($data, 'params');
+        }
+
+        return $params;
+    }
 }
