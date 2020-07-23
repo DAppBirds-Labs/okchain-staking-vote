@@ -33,4 +33,29 @@ class AccountController extends Controller
             'asset_logo' => $asset_logo,
         ]);
     }
+
+    // 用户的投票
+    public function votes(Request $request)
+    {
+        $user_address = $request->get('user_address');
+
+        $delegator_info = OkChainExplorer::instance()->getDelegator($user_address);
+
+        $user_vote_addresses = Arr::get($delegator_info, 'validator_address');
+
+        $validator_cache_impl = ValidatorCache::instance();
+        $lists = $validator_cache_impl->getAllValidators();
+
+        $validator_maps = \Arr::build($lists, function($key, $val){
+            return [$val['operator_address'], $val];
+        });
+
+        $user_vote_validators = [];
+        foreach ($user_vote_addresses as $validator_address){
+            $validator_info = \Arr::get($validator_maps, $validator_address);
+            $user_vote_validators[] = $validator_info;
+        }
+
+        return $this->success($user_vote_validators);
+    }
 }
