@@ -26,6 +26,7 @@ foreach ([
              'validator/vote-addresses' => 'ValidatorController@voteAddresses'
          ] as $uri => $controler)
 {
+    $uri = 'api/route/'.$uri;
     $router->get($uri, $controler);
     $router->post($uri, $controler);
 }

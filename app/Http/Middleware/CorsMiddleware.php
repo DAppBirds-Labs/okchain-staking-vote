@@ -38,7 +38,7 @@ class CorsMiddleware
         if (is_callable($methodVariable, false, $callable_name)) {
             return $this->setCorsHeaders($response, $origin);
         }
-        
+
         return $response;
     }
 
