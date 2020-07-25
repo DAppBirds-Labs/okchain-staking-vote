@@ -20,34 +20,51 @@ class ValidatorCache extends Service
         $data && $data = json_decode($data, true);
         $now = time();
         $results = null;
-        if(!$data || $data['expire_time'] < $now){
+        if (!$data || $data['expire_time'] < $now) {
             $lists = OkChainExplorer::instance()->validators();
-            if(!$lists){
+            if (!$lists) {
                 return null;
             }
 
+            $uri_alias_arr = [];
             $results = [];
-            foreach ($lists as $item){
+            foreach ($lists as $item) {
+                $validator_address = $item['operator_address'];
                 $tmp = [];
                 $tmp['operator_address'] = $item['operator_address'];
                 $tmp['consensus_pubkey'] = $item['consensus_pubkey'];
                 $tmp['delegator_shares'] = $item['delegator_shares'];
                 $identity = Arr::get($item, 'description.identity');
 
-                if(Str::startsWith($identity, ['http://', 'https://'])){
+                if (Str::startsWith($identity, ['http://', 'https://'])) {
                     $logo = $identity;
-                }else if(Str::contains($identity, 'logo|||')){
+                } else if (Str::contains($identity, 'logo|||')) {
                     $logo = str_replace('logo|||', '', $identity);
-                }else{
+                } else {
                     $logo = config('app.validator_logo');
                 }
 
-                $tmp['description'] =  [
-                    'moniker' => Arr::get($item, 'description.moniker'),
+                $node_name = Arr::get($item, 'description.moniker');
+
+                $tmp['description'] = [
+                    'moniker' => $node_name,
                     'website' => Arr::get($item, 'description.website'),
                     'details' => Arr::get($item, 'description.details'),
                     'logo' => $logo,
                 ];
+
+                $uri_alias = \Utility::name2uri($node_name);
+                $tmp['validator_uri_name'] = $uri_alias;
+                $vote_num = $this->getVoteNumByValidator($validator_address);
+                if($vote_num === false){
+                    $tmp['vote_num'] = null;
+                }else{
+                    $tmp['vote_num'] = (int) $vote_num;
+                }
+
+                $uri_alias_arr[$uri_alias] = $validator_address;
+
+                $this->storeValidatorAlias($uri_alias_arr);
 
                 $results[] = $tmp;
             }
@@ -55,12 +72,70 @@ class ValidatorCache extends Service
             $now += 10;
 
             $results && \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'results' => $results]));
-        }else{
+        } else {
             $results = Arr::get($data, 'results');
         }
 
         return $results;
     }
+
+    public function storeValidatorAlias($uri_alias_arr)
+    {
+        $cache_key = 'cache:mapping-uri-alias-validator';
+        $ret = \Cache::forever($cache_key, json_encode($uri_alias_arr));
+
+        return $ret;
+    }
+
+    public function getValidatorByUriAlias($uri_alias)
+    {
+        $cache_key = 'cache:mapping-uri-alias-validator';
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        if($data){
+            return \Arr::get($data, $uri_alias);
+        }
+
+        return false;
+    }
+
+    public function getVoteNumByValidator($validator_address)
+    {
+        $cache_key = sprintf('cache:vote-num-validator-%s', $validator_address);
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        $now = time();
+        $info = null;
+        if (!$data || $data['expire_time'] < $now) {
+            $vote_addresses = OkChainExplorer::instance()->getVoteAddressByValidator($validator_address);
+            if($vote_addresses === false){
+                return false;
+            }
+
+            $vote_num = count($vote_addresses);
+            $now += 600;
+            \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'vote_num' => $vote_num]));
+
+        } else {
+            $vote_num = $data['vote_num'];
+        }
+
+        return $vote_num;
+    }
+
+    public function storeVoteNumByValidator($validator_address, $vote_num)
+    {
+        $cache_key = sprintf('cache:vote-num-validator-%s', $validator_address);
+
+        $now = time();
+        $now += 600;
+
+        $ret = \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'vote_num' => $vote_num]));
+
+        return $ret;
+    }
+
+
 
     public function getPoolInfo()
     {

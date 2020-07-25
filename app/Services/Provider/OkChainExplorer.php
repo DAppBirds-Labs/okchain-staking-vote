@@ -174,7 +174,6 @@ class OkChainExplorer extends Service
             $url = $this->oklink_api_provider . $path;
         }
 
-        var_dump($url);
         return $this->network_impl->get($url, $method, $data, [
             'x-apiKey: '. $this->api_key,
             'App-Type: web',

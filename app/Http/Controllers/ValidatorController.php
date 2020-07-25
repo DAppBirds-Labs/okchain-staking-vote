@@ -14,6 +14,8 @@ class ValidatorController extends Controller
     {
         // 可领取收益
         $validator_address = $request->get('validator_address');
+        $validator_name = $request->get('validator_uri_name');
+        $validator_name && $validator_address = ValidatorCache::instance()->getValidatorByUriAlias($validator_name);
 
         $okchain_explorer_impl = OkChainExplorer::instance();
         $_info = $okchain_explorer_impl->getValidator($validator_address);
@@ -63,6 +65,8 @@ class ValidatorController extends Controller
     public function voteAddresses(Request $request)
     {
         $validator_address = $request->get('validator_address');
+        $validator_name = $request->get('validator_uri_name');
+        $validator_name && $validator_address = ValidatorCache::instance()->getValidatorByUriAlias($validator_name);
 
         $okchain_explorer_impl = OkChainExplorer::instance();
         $validator_cache_impl = ValidatorCache::instance();
@@ -71,6 +75,7 @@ class ValidatorController extends Controller
 
         $results = null;
         if($vote_addresses){
+            ValidatorCache::instance()->storeVoteNumByValidator($validator_address, count($vote_addresses));
             foreach ($vote_addresses as $item){
 
                 $voter_address = $item['voter_address'];

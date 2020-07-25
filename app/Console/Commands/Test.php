@@ -13,8 +13,9 @@ class Test extends Command
     public function handle()
     {
 
-        $validator_logo = config('app.validator_logo');
-        var_dump($validator_logo);
+        $name = 'x.d/d$?/$sda#';
+        $name = \Utility::name2uri($name);
+        var_dump($name);
 //        $demo = \Online::testDemo();
 //        var_dump($demo);
 
