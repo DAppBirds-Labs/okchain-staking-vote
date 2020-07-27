@@ -50,10 +50,13 @@ class AccountController extends Controller
         });
 
         $user_vote_validators = [];
-        foreach ($user_vote_addresses as $validator_address){
-            $validator_info = \Arr::get($validator_maps, $validator_address);
-            $user_vote_validators[] = $validator_info;
+        if($user_vote_addresses){
+            foreach ($user_vote_addresses as $validator_address){
+                $validator_info = \Arr::get($validator_maps, $validator_address);
+                $user_vote_validators[] = $validator_info;
+            }    
         }
+        
 
         return $this->success($user_vote_validators);
     }
