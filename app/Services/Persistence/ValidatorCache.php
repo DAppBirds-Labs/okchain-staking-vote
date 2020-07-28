@@ -146,7 +146,8 @@ class ValidatorCache extends Service
 
 
             $deposit_token = 0;
-            foreach ($vote_addresses as $vote_address){
+            foreach ($vote_addresses as $item){
+                $vote_address = $item['voter_address'];
                 $delegator_info = $this->getOnlyDelegator($vote_address);
 
                 $_tokens = (float)\Arr::get($delegator_info, 'tokens');
