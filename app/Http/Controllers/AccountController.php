@@ -56,7 +56,6 @@ class AccountController extends Controller
                 $user_vote_validators[] = $validator_info;
             }    
         }
-        
 
         return $this->success($user_vote_validators);
     }
