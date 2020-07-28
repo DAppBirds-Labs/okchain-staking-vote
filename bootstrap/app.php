@@ -23,6 +23,9 @@ $app = new Laravel\Lumen\Application(
 
 // Load config
 $app->configure('app');
+$app->configure('cache');
+$app->configure('database');
+$app->configure('queue');
 
  $app->withFacades(true, [
      'App\Support\Facades\Online' => 'Online'
