@@ -21,7 +21,7 @@ class AccountController extends Controller
         //
         $asset_info = $validator_cache_impl->getAccountAsset($user_address, $bond_denom);
 
-        $delegator_info = $validator_cache_impl->getDelegator($user_address);
+        $delegator_info = $validator_cache_impl->getDelegator($user_address, true);
 
         $available = Arr::get($asset_info, 'available');
 

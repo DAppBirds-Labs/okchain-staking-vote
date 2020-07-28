@@ -15,7 +15,8 @@ class ValidatorController extends Controller
         // 可领取收益
         $validator_address = $request->get('validator_address');
         $validator_name = $request->get('validator_uri_name');
-        $validator_name && $validator_address = ValidatorCache::instance()->getValidatorByUriAlias($validator_name);
+        $validator_cache_impl = ValidatorCache::instance();
+        $validator_name && $validator_address = $validator_cache_impl->getValidatorByUriAlias($validator_name);
 
         $okchain_explorer_impl = OkChainExplorer::instance();
         $_info = $okchain_explorer_impl->getValidator($validator_address);
@@ -41,7 +42,21 @@ class ValidatorController extends Controller
             'logo' => $logo,
         ];
 
-        $params = ValidatorCache::instance()->getParam();
+        $vote_num = $validator_cache_impl->getVoteNumByValidator($validator_address);
+        if($vote_num === false){
+            $validator_info['vote_num'] = null;
+        }else{
+            $validator_info['vote_num'] = (int) $vote_num;
+        }
+
+        $deposit_token = $validator_cache_impl->getDepositToken($validator_address);
+        if($deposit_token === false){
+            $validator_info['vote_token'] = null;
+        }else{
+            $validator_info['vote_token'] = floatval($deposit_token). '';
+        }
+
+        $params = $validator_cache_impl->getParam();
         $params['asset_logo'] = \Image::formatCustomUrl($params['asset_logo'], $this->is_force_secure);
 
         $bond_denom = Arr::get($params, 'bond_denom');

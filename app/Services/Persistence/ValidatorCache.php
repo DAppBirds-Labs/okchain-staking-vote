@@ -2,6 +2,7 @@
 
 namespace App\Services\Persistence;
 
+use App\Jobs\DelegatorCacheJob;
 use App\Services\Provider\OkChainExplorer;
 use App\Services\Service;
 use Illuminate\Support\Arr;
@@ -60,6 +61,13 @@ class ValidatorCache extends Service
                     $tmp['vote_num'] = null;
                 }else{
                     $tmp['vote_num'] = (int) $vote_num;
+                }
+
+                $deposit_token = $this->getDepositToken($validator_address);
+                if($deposit_token === false){
+                    $tmp['vote_token'] = null;
+                }else{
+                    $tmp['vote_token'] = floatval($deposit_token). '';
                 }
 
                 $uri_alias_arr[$uri_alias] = $validator_address;
@@ -123,6 +131,39 @@ class ValidatorCache extends Service
         return $vote_num;
     }
 
+    public function getDepositToken($validator_address)
+    {
+        $cache_key = sprintf('cache:deposit-token-validator-%s', $validator_address);
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+        $now = time();
+        $info = null;
+        if (!$data || $data['expire_time'] < $now) {
+            $vote_addresses = OkChainExplorer::instance()->getVoteAddressByValidator($validator_address);
+            if($vote_addresses === false){
+                return false;
+            }
+
+
+            $deposit_token = 0;
+            foreach ($vote_addresses as $vote_address){
+                $delegator_info = $this->getOnlyDelegator($vote_address);
+
+                $_tokens = (float)\Arr::get($delegator_info, 'tokens');
+                $deposit_token += $_tokens;
+                dispatch(new DelegatorCacheJob($vote_address));
+            }
+
+            $now += mt_rand(10, 60);
+            \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'deposit_token' => $deposit_token]));
+
+        } else {
+            $deposit_token = $data['deposit_token'];
+        }
+
+        return $deposit_token;
+    }
+
     public function storeVoteNumByValidator($validator_address, $vote_num)
     {
         $cache_key = sprintf('cache:vote-num-validator-%s', $validator_address);
@@ -144,22 +185,38 @@ class ValidatorCache extends Service
         return $response;
     }
 
-    public function getDelegator($delegator_address)
+    public function getDelegator($delegator_address, $is_force = false)
     {
         $cache_key = sprintf('cache:delegator_info-%s', $delegator_address);
         $data = \Cache::get($cache_key);
         $data && $data = json_decode($data, true);
         $now = time();
         $info = null;
-        if(!$data || $data['expire_time'] < $now){
+        if(!$data || $data['expire_time'] < $now || $is_force){
             $info = OkChainExplorer::instance()->getDelegator($delegator_address);
 
-            $expire_time = $now + 30;
+            if(!empty($info['code'])){
+                $info = [];
+                $info['delegator_address'] = $delegator_address;
+            }
+
+            $expire_time = $now + mt_rand(3600, 86400);
 
             $info && \Cache::forever($cache_key, json_encode(['expire_time' => $expire_time , 'info' => $info]));
         }else{
             $info = Arr::get($data, 'info');
         }
+
+        return $info;
+    }
+
+    public function getOnlyDelegator($delegator_address)
+    {
+        $cache_key = sprintf('cache:delegator_info-%s', $delegator_address);
+        $data = \Cache::get($cache_key);
+        $data && $data = json_decode($data, true);
+
+        $info = Arr::get($data, 'info');
 
         return $info;
     }
