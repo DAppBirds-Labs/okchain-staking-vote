@@ -18,6 +18,10 @@ $router->get('/', function () use ($router) {
     return view('test/index');
 });
 
+//proxy
+$router->get('route/proxy/{path:.*}', 'Route\ProxyController@index');
+$router->post('route/proxy/{path:.*}', 'Route\ProxyController@index');
+
 foreach ([
              'main' => 'MainController@index',
              'account/votes' => 'AccountController@votes',

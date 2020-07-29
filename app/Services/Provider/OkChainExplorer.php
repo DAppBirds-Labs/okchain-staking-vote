@@ -12,6 +12,7 @@ use Illuminate\Support\Arr;
 class OkChainExplorer extends Service
 {
     protected $api_provider = 'https://www.okex.com';
+    protected $api_provider_region = 'https://www.okex.me';
     protected $oklink_api_provider = 'https://www.oklink.com';
     private $api_key = 'LWIzMWUtNDU0Ny05Mjk5LWI2ZDA3Yjc2MzFhYmEyYzkwM2NjfDI3MDY1MTYzODY2NjY5Nzg=';
 
@@ -157,11 +158,20 @@ class OkChainExplorer extends Service
 
     protected function _getUrl($path, $method, $data = [])
     {
-        if($method == 'GET'){
-            $url = $this->api_provider . $path . ($data ? '?'. http_build_query($data) : '');
+        if(env('APP_ENV') == 'local'){
+            if($method == 'GET'){
+                $url = $this->api_provider_region . $path . ($data ? '?'. http_build_query($data) : '');
+            }else{
+                $url = $this->api_provider_region . $path;
+            }
         }else{
-            $url = $this->api_provider . $path;
+            if($method == 'GET'){
+                $url = $this->api_provider . $path . ($data ? '?'. http_build_query($data) : '');
+            }else{
+                $url = $this->api_provider . $path;
+            }
         }
+
 
         return $this->network_impl->get($url, $method, $data);
     }
@@ -184,5 +194,15 @@ class OkChainExplorer extends Service
             'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
             'x-cdn: https://static.bafang.com',
         ]);
+    }
+
+    public function proxyCall($path, $data, $method = 'GET')
+    {
+        return $this->_getUrl($path, $method, $data);
+    }
+
+    public static function instance()
+    {
+        return new static();
     }
 }
