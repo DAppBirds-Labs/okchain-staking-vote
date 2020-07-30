@@ -11,12 +11,25 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-//    return $router->app->version();
+function homeRoute($router)
+{
+    //    return $router->app->version();
 //    return 'DAppBirds is Blockchain service providers';
 
     return view('okchain-voter/index');
 //    return view('test/index');
+}
+
+$router->get('/', function ()use ($router){
+    return homeRoute($router);
+});
+
+$router->get('/profile', function ()use ($router){
+    return homeRoute($router);
+});
+
+$router->get('/node/{path:.*}', function ()use ($router){
+    return homeRoute($router);
 });
 
 //proxy
