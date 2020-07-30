@@ -30,7 +30,7 @@ redis
 
 dappbirds production 
 
-> php -S 172.19.16.16:8000 -t public
+> php -S 172.19.1*.1*:8000 -t public
 
 
 访问链接: http://119.28.179.45:8000

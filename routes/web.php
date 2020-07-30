@@ -15,7 +15,8 @@ $router->get('/', function () use ($router) {
 //    return $router->app->version();
 //    return 'DAppBirds is Blockchain service providers';
 
-    return view('test/index');
+    return view('okchain-voter/index');
+//    return view('test/index');
 });
 
 //proxy
