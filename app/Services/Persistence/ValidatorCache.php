@@ -14,14 +14,14 @@ use Illuminate\Support\Str;
  */
 class ValidatorCache extends Service
 {
-    public function getAllValidators()
+    public function getAllValidators($is_force = false)
     {
         $cache_key = 'cache:all-validator';
         $data = \Cache::get($cache_key);
         $data && $data = json_decode($data, true);
         $now = time();
         $results = null;
-        if (!$data || $data['expire_time'] < $now) {
+        if (!$data || $data['expire_time'] < $now || $is_force){
             $lists = OkChainExplorer::instance()->validators();
             if (!$lists) {
                 return null;
@@ -128,21 +128,21 @@ class ValidatorCache extends Service
         return false;
     }
 
-    public function getVoteNumByValidator($validator_address)
+    public function getVoteNumByValidator($validator_address, $is_force = false)
     {
         $cache_key = sprintf('cache:vote-num-validator-%s', $validator_address);
         $data = \Cache::get($cache_key);
         $data && $data = json_decode($data, true);
         $now = time();
         $info = null;
-        if (!$data || $data['expire_time'] < $now) {
+        if (!$data || $data['expire_time'] < $now || $is_force) {
             $vote_addresses = OkChainExplorer::instance()->getVoteAddressByValidator($validator_address);
             if($vote_addresses === false){
                 return false;
             }
 
             $vote_num = count($vote_addresses);
-            $now += 600;
+            $now += mt_rand(10, 30);
             \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'vote_num' => $vote_num]));
 
         } else {
@@ -152,14 +152,14 @@ class ValidatorCache extends Service
         return $vote_num;
     }
 
-    public function getDepositToken($validator_address)
+    public function getDepositToken($validator_address, $is_force = false)
     {
         $cache_key = sprintf('cache:deposit-token-validator-%s', $validator_address);
         $data = \Cache::get($cache_key);
         $data && $data = json_decode($data, true);
         $now = time();
         $info = null;
-        if (!$data || $data['expire_time'] < $now) {
+        if (!$data || $data['expire_time'] < $now || $is_force) {
             $vote_addresses = OkChainExplorer::instance()->getVoteAddressByValidator($validator_address);
             if($vote_addresses === false){
                 return false;
@@ -176,7 +176,7 @@ class ValidatorCache extends Service
                 dispatch(new DelegatorCacheJob($vote_address));
             }
 
-            $now += mt_rand(10, 60);
+            $now += mt_rand(10, 30);
             \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'deposit_token' => $deposit_token]));
 
         } else {
