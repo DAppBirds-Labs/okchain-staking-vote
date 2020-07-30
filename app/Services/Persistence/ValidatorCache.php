@@ -29,12 +29,15 @@ class ValidatorCache extends Service
 
             $uri_alias_arr = [];
             $results = [];
+            $total_shares = 0;
             foreach ($lists as $item) {
                 $validator_address = $item['operator_address'];
                 $tmp = [];
                 $tmp['operator_address'] = $item['operator_address'];
                 $tmp['consensus_pubkey'] = $item['consensus_pubkey'];
                 $tmp['delegator_shares'] = $item['delegator_shares'];
+
+                $total_shares += $item['delegator_shares'];
                 $identity = Arr::get($item, 'description.identity');
 
                 if (Str::startsWith($identity, ['http://', 'https://'])) {
@@ -77,6 +80,8 @@ class ValidatorCache extends Service
                 $results[] = $tmp;
             }
 
+            $total_shares > 0 && $this->storeStakingTotalShares($total_shares);
+
             $now += 10;
 
             $results && \Cache::forever($cache_key, json_encode(['expire_time' => $now, 'results' => $results]));
@@ -85,6 +90,22 @@ class ValidatorCache extends Service
         }
 
         return $results;
+    }
+
+    public function storeStakingTotalShares($total_shares)
+    {
+        $cache_key = 'cache:staking-total-shares';
+        $ret = \Cache::forever($cache_key, $total_shares);
+
+        return $ret;
+    }
+
+    public function getStakingTotalShares()
+    {
+        $cache_key = 'cache:staking-total-shares';
+        $total_shares = \Cache::get($cache_key);
+
+        return $total_shares;
     }
 
     public function storeValidatorAlias($uri_alias_arr)

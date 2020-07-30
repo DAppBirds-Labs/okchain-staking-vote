@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Jobs\ExampleJob;
+use App\Services\Persistence\ValidatorCache;
 use App\Services\Provider\OkChainExplorer;
 use App\Services\Service\NetworkService;
 use Illuminate\Console\Command;
@@ -15,9 +16,12 @@ class Test extends Command
     public function handle()
     {
 
-        $validator_address = 'okchainvaloper1g7znsf24w4jc3xfca88pq9kmlyjdare6mph5rx';
-        $response = OkChainExplorer::instance()->getProducer($validator_address);
-        var_dump($response);
+        $validator_cache_impl = ValidatorCache::instance();
+        $lists = $validator_cache_impl->getAllValidators();
+
+//        $validator_address = 'okchainvaloper1g7znsf24w4jc3xfca88pq9kmlyjdare6mph5rx';
+//        $response = OkChainExplorer::instance()->getProducer($validator_address);
+//        var_dump($response);
 //        $name = 'x.d/d$?/$sda#';
 //        $name = \Utility::name2uri($name);
 //        var_dump($name);
