@@ -72,8 +72,12 @@ class ValidatorController extends Controller
 
         $validator_info['reward_balance'] = $reward_balance;
 
+        $pool_assets = $okchain_explorer_impl->poolAssets();
+        $bonded_tokens = Arr::get($pool_assets, 'bonded_tokens');
+
         return $this->success($validator_info, [
             'staking_param' => $params,
+            'pool_bonded_tokens' => $bonded_tokens,
         ]);
     }
 
