@@ -25,7 +25,7 @@ class MainController extends Controller
             'staking_param' => $params,
         ]);
     }
-    
+
     public function voteStore(Request $request)
     {
         $user_address = $request->get('user_address');
