@@ -16,11 +16,12 @@ class ProxyController extends Controller
         $path = $req->path();
         $method = $req->method();
         $path = str_replace('route/proxy', '', $path);
+        $data_raw = file_get_contents('php://input');
 
         if ($method == 'GET') {
             $response = OkChainExplorer::instance()->proxyCall($path, $_GET);
         } else {
-            $response = OkChainExplorer::instance()->proxyCall($path, $_POST, 'POST');
+            $response = OkChainExplorer::instance()->proxyCall($path, json_decode($data_raw, true), 'POST');
         }
 
         return response($response, 200, [

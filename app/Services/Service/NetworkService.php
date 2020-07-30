@@ -38,7 +38,8 @@ class NetworkService extends Service
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
             if($method == 'POST'){
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
             }
 
             $response = curl_exec($ch);

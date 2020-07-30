@@ -15,15 +15,9 @@ class Test extends Command
     public function handle()
     {
 
-
-        dispatch(new ExampleJob('test111'));
-        var_dump('gogogogo');
-        dispatch(new ExampleJob('test112'));
-        var_dump('gogogogdddo');
-        dispatch(new ExampleJob('test113'));
-        var_dump('gogogogddxxxo');
-        dispatch(new ExampleJob('test114'));
-
+        $validator_address = 'okchainvaloper1g7znsf24w4jc3xfca88pq9kmlyjdare6mph5rx';
+        $response = OkChainExplorer::instance()->getProducer($validator_address);
+        var_dump($response);
 //        $name = 'x.d/d$?/$sda#';
 //        $name = \Utility::name2uri($name);
 //        var_dump($name);
@@ -52,7 +46,6 @@ class Test extends Command
 //        $response = OkChainExplorer::instance()->getDelegator('okchain16jr4ru6qsej8ejfdgayzx5lu2l5vrqhahvkd0f');
 //
 //        var_dump($response);
-
 
 //        $response = OkChainExplorer::instance()->getAllProducer(0, 30);
 //

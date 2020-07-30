@@ -139,6 +139,14 @@ class OkChainExplorer extends Service
         return $response;
     }
 
+    public function getProducer($validator_address)
+    {
+        $t = time() * 1000;
+        $this->_getUrlOnLink("/api/explorer/v1/okchain_test/addresses/{$validator_address}", 'GET', [
+            't' => $t,
+        ]);
+    }
+
     public function getAccountAsset($address, $asset)
     {
         $response = $this->_getUrl("/okchain/v1/accounts/{$address}", 'GET', [
@@ -172,7 +180,6 @@ class OkChainExplorer extends Service
             }
         }
 
-
         return $this->network_impl->get($url, $method, $data);
     }
 
@@ -184,6 +191,7 @@ class OkChainExplorer extends Service
             $url = $this->oklink_api_provider . $path;
         }
 
+        $t = Arr::get($data, 't');
         return $this->network_impl->get($url, $method, $data, [
             'x-apiKey: '. $this->api_key,
             'App-Type: web',
@@ -193,6 +201,7 @@ class OkChainExplorer extends Service
             'timeout: 10000',
             'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36',
             'x-cdn: https://static.bafang.com',
+            'Cookie: locale=zh_CN; _okcoin_legal_currency=CNY; Hm_lpvt_5244adb4ce18f1d626ffc94627dd9fd7='. ($t/ 1000),
         ]);
     }
 
