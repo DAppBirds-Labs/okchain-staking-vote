@@ -38,6 +38,7 @@ $router->post('route/proxy/{path:.*}', 'Route\ProxyController@index');
 
 foreach ([
              'main' => 'MainController@index',
+	     'main/vote-store' => 'MainController@voteStore',
              'account/votes' => 'AccountController@votes',
              'account/info' => 'AccountController@info',
              'validator/info' => 'ValidatorController@info',
