@@ -26,11 +26,5 @@ redis
 
 > php -S localhost:8000 -t public
 
-## DAppBirds 部署脚本
 
-dappbirds production 
-
-> php -S 172.19.1*.1*:8000 -t public
-
-
-访问链接: http://119.28.179.45:8000
+访问链接: http://localhost:8000
